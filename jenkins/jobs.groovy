@@ -21,18 +21,14 @@ pipeline {
 
     stage('Build Flask Image') {
       steps {
-        script {
-          docker.build('flask-app:latest', './flask-app')
-        }
+        sh 'docker build -t flask-app:latest ./flask-app'
       }
     }
 
     stage('Build Nginx Image') {
       steps {
-        script {
-          docker.build('nginx-proxy:latest', './nginx-proxy')
+        sh 'docker build -t nginx-proxy:latest ./nginx-proxy'
         }
-      }
     }
 
     stage('Run Containers') {
