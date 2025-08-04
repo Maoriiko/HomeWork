@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  flask-app:
+    image: flask-app:latest
+    build:
+      context: ./flask-app
+    ports:
+      - "5001:5000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - flask-net
+
+  nginx-proxy:
+    image: nginx-proxy:latest
+    build:
+      context: ./nginx-proxy
+    ports:
+      - "8081:80"
+    depends_on:
+      - flask-app
+    networks:
+      - flask-net
+
+networks:
+  flask-net:
+    driver: bridge
