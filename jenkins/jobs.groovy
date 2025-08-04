@@ -48,31 +48,39 @@ spec:
       }
     }
 
-    stage('Run Containers') {
-      steps {
-        container('docker') {
-          sh '''
-            docker network create flask-net || true
-            docker run -d --rm --name flask-app --network flask-net flask-app:latest
-            docker run -d --rm --name nginx-proxy -p 8081:80 --network flask-net nginx-proxy:latest
+	stage('Run Containers') {
+	  steps {
+		container('docker') {
+		  sh '''
+			echo "--- Creating docker network ---"
+			docker network create flask-net || true
 
-            echo "--- Inspecting docker network flask-net ---"
-            docker network inspect flask-net
+			echo "--- Running flask-app ---"
+			docker run -d --rm --name flask-app \\
+			  -p 5001:5000 \\
+			  --network flask-net \\
+			  -v /var/run/docker.sock:/var/run/docker.sock \\
+			  flask-app:latest
 
-            echo "--- Checking running containers ---"
-            docker ps
+			echo "--- Waiting for Flask to be ready ---"
+			sleep 5
 
-            echo "--- Trying ping from another container ---"
-            docker run --rm --network flask-net busybox ping -c 3 nginx-proxy || true
+			echo "--- Running nginx-proxy ---"
+			docker run -d --rm --name nginx-proxy \\
+			  -p 8081:80 \\
+			  --network flask-net \\
+			  -v /var/run/docker.sock:/var/run/docker.sock \\
+			  nginx-proxy:latest
 
-            echo "--- Curl using direct IP ---"
-            nginx_ip=\\$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' nginx-proxy)
-            echo "NGINX IP: \\$nginx_ip"
-            docker run --rm --network flask-net curlimages/curl -v http://\\$nginx_ip/containers
-          '''
-        }
-      }
-    }
+			echo "--- Checking running containers ---"
+			docker ps
+
+			echo "--- Curl localhost through nginx ---"
+			curl -v http://localhost:8081/containers || true
+		  '''
+		}
+	  }
+	}
   }
 
   post {
