@@ -65,8 +65,10 @@ spec:
             echo "--- Trying ping from another container ---"
             docker run --rm --network flask-net busybox ping -c 3 nginx-proxy || true
 
-            echo "--- Trying curl from another container ---"
-            docker run --rm --network flask-net curlimages/curl -v http://nginx-proxy/containers
+            echo "--- Curl using direct IP ---"
+            nginx_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' nginx-proxy)
+            echo "NGINX IP: $nginx_ip"
+            docker run --rm --network flask-net curlimages/curl -v http://$nginx_ip/containers
           '''
         }
       }
