@@ -112,12 +112,15 @@ spec:
     stage('Prepare Nginx Config') {
       steps {
         container('docker') {
-			sh '''
-			  cp ./nginx-proxy/nginx.conf ./nginx-proxy/nginx.conf.modified
-			  sed -i '/location \\\//a \\\
-			  proxy_set_header X-Forwarded-For $remote_addr; \\\
-			  proxy_pass http://flask-app:5000;' ./nginx-proxy/nginx.conf.modified
-			'''
+          sh '''
+            cp ./nginx-proxy/nginx.conf ./nginx-proxy/nginx.conf.modified
+            cat > ./nginx-proxy/temp_config.txt << 'EOF'
+            proxy_set_header X-Forwarded-For \\$remote_addr;
+            proxy_pass http://flask-app:5000;
+EOF
+            sed -i '/location \\//r ./nginx-proxy/temp_config.txt' ./nginx-proxy/nginx.conf.modified
+            rm ./nginx-proxy/temp_config.txt
+          '''
         }
       }
     }
@@ -195,38 +198,38 @@ spec:
     }
 
     stage('Run Containers') {
-	  steps {
-		container('docker') {
-		  sh '''
-			echo "--- Creating docker network ---"
-			docker network create flask-net || true
+      steps {
+        container('docker') {
+          sh '''
+            echo "--- Creating docker network ---"
+            docker network create flask-net || true
 
-			echo "--- Running flask-app ---"
-			docker run -d --rm --name flask-app \\
-			  -p 5001:5000 \\
-			  --network flask-net \\
-			  -v /var/run/docker.sock:/var/run/docker.sock \\
-			  flask-app:latest
+            echo "--- Running flask-app ---"
+            docker run -d --rm --name flask-app \\
+              -p 5001:5000 \\
+              --network flask-net \\
+              -v /var/run/docker.sock:/var/run/docker.sock \\
+              flask-app:latest
 
-			echo "--- Waiting for Flask to be ready ---"
-			sleep 5
+            echo "--- Waiting for Flask to be ready ---"
+            sleep 5
 
-			echo "--- Running nginx-proxy ---"
-			docker run -d --rm --name nginx-proxy \\
-			  -p 8081:80 \\
-			  --network flask-net \\
-			  -v /var/run/docker.sock:/var/run/docker.sock \\
-			  nginx-proxy:latest
+            echo "--- Running nginx-proxy ---"
+            docker run -d --rm --name nginx-proxy \\
+              -p 8081:80 \\
+              --network flask-net \\
+              -v /var/run/docker.sock:/var/run/docker.sock \\
+              nginx-proxy:latest
 
-			echo "--- Checking running containers ---"
-			docker ps
+            echo "--- Checking running containers ---"
+            docker ps
 
-			echo "--- Curl localhost through nginx ---"
-			curl -v http://localhost:8081/containers || true
-		  '''
-		}
-	  }
-	}
+            echo "--- Curl localhost through nginx ---"
+            curl -v http://localhost:8081/containers || true
+          '''
+        }
+      }
+    }
 
     stage('Cleanup') {
       steps {
