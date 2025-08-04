@@ -55,8 +55,18 @@ spec:
             docker network create flask-net || true
             docker run -d --rm --name flask-app --network flask-net flask-app:latest
             docker run -d --rm --name nginx-proxy -p 8081:80 --network flask-net nginx-proxy:latest
-            sleep 10
-			docker run --rm --network flask-net curlimages/curl -f http://nginx-proxy/containers
+
+            echo "--- Inspecting docker network flask-net ---"
+            docker network inspect flask-net
+
+            echo "--- Checking running containers ---"
+            docker ps
+
+            echo "--- Trying ping from another container ---"
+            docker run --rm --network flask-net busybox ping -c 3 nginx-proxy || true
+
+            echo "--- Trying curl from another container ---"
+            docker run --rm --network flask-net curlimages/curl -v http://nginx-proxy/containers
           '''
         }
       }
