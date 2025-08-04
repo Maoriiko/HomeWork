@@ -112,11 +112,10 @@ spec:
     stage('Prepare Nginx Config') {
       steps {
         container('docker') {
-          sh 'cp ./nginx-proxy/nginx.conf ./nginx-proxy/nginx.conf.modified'
-          writeFile file: './nginx-proxy/proxy_config.txt', text: '''            proxy_set_header X-Forwarded-For $remote_addr;
-            proxy_pass http://flask-app:5000;'''
-          sh 'sed -i "/location \\//r ./nginx-proxy/proxy_config.txt" ./nginx-proxy/nginx.conf.modified'
-          sh 'rm ./nginx-proxy/proxy_config.txt'
+          sh '''
+            cp ./nginx-proxy/nginx.conf ./nginx-proxy/nginx.conf.modified
+            sed -i 's|location / {|location / {\\n        proxy_set_header X-Forwarded-For \\$remote_addr;\\n        proxy_pass http://flask-app:5000;|' ./nginx-proxy/nginx.conf.modified
+          '''
         }
       }
     }
