@@ -8,7 +8,7 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        git url: 'https://github.com/yourusername/yourrepo.git', branch: 'main'
+        git url: 'https://github.com/Maoriiko/HomeWork.git', branch: 'main'
       }
     }
     
