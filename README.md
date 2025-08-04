@@ -1,10 +1,27 @@
-# 🚀 DevOps & MLOps Assignment Project
+<div id="top" align="center">
 
-This repository contains a complete CI/CD pipeline using Jenkins, Docker, Kubernetes, and KEDA for a Flask-based web application.
+<a href="https://github.com/Maoriiko">
+  <img src="https://img.shields.io/badge/DevOps&MLOps-Project-blueviolet?style=for-the-badge&logo=github" alt="DevOps MLOps Badge">
+</a>
 
----
+</div>
 
-## 🧩 Project Structure
+<p align="center">
+  <em>Complete CI/CD pipeline with Jenkins, Docker, Kubernetes, and KEDA – for a Flask-based app.</em>
+</p>
+
+<img src="https://raw.githubusercontent.com/eli64s/readme-ai/main/docs/docs/assets/svg/line-gradient.svg" alt="line break" width="100%" height="3px">
+
+> [!IMPORTANT]  
+> This project demonstrates a production-style CI/CD workflow using modern DevOps practices and scalable Kubernetes deployment.
+
+<img src="https://raw.githubusercontent.com/eli64s/readme-ai/main/docs/docs/assets/svg/line-gradient.svg" alt="line break" width="100%" height="3px">
+
+## 🧩 Project Overview
+
+This repository contains a complete CI/CD pipeline using **Jenkins**, **Docker**, **Kubernetes**, and **KEDA**, designed to deploy and scale a **Flask** web application via **Nginx** reverse proxy.
+
+## 📁 Project Structure
 
 ```
 .
@@ -15,19 +32,15 @@ This repository contains a complete CI/CD pipeline using Jenkins, Docker, Kubern
 └── README.md
 ```
 
----
+## 📦 Technologies Used
 
-## 📦 Technologies
-
-- Jenkins (Pipeline + Job DSL Plugin)
-- Docker & Docker Hub
-- Python (Flask)
-- Nginx
-- Kubernetes (k8s)
-- KEDA (Kubernetes Event-driven Autoscaler)
-- GitHub
-
----
+- 🛠️ Jenkins (Pipelines + Job DSL)
+- 🐳 Docker & Docker Hub
+- 🐍 Python (Flask)
+- 🌐 Nginx Reverse Proxy
+- ☸️ Kubernetes (k8s)
+- 🔁 KEDA (Event-driven Autoscaler)
+- 💻 GitHub
 
 ## 🔧 Jenkins Pipelines
 
@@ -49,15 +62,11 @@ This repository contains a complete CI/CD pipeline using Jenkins, Docker, Kubern
 - Exposes Nginx only
 - Sends test request to validate correct forwarding to Flask app
 
----
-
 ## ☸️ Kubernetes Deployment
 
 - Flask app runs with PersistentVolumeClaim
 - KEDA is deployed and configured to autoscale based on metrics
 - Includes services, deployments, and configs for both Flask and Nginx apps
-
----
 
 ## 🧪 Test Instructions
 
@@ -70,15 +79,11 @@ You can test the full flow locally or in a Kubernetes environment.
    - Nginx proxies to Flask correctly and adds headers.
    - KEDA scales the app on trigger.
 
----
-
 ## 💡 Notes
 
 - All Docker images are pushed to Docker Hub (replace with your repo)
 - Jenkins setup assumes Job DSL Plugin is pre-installed
 - Make sure KEDA CRDs are installed before applying manifests
-
----
 
 ## 📁 Files Worth Noting
 
@@ -86,13 +91,9 @@ You can test the full flow locally or in a Kubernetes environment.
 - `nginx-proxy/nginx.conf` – updated proxy config
 - `k8s/keda-scaledobject.yaml` – KEDA configuration added
 
----
-
 ## ✍️ Author
 
 **Maoriiko** – [GitHub](https://github.com/Maoriiko)
-
----
 
 ## 📄 License
 
