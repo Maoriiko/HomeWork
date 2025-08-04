@@ -114,7 +114,8 @@ spec:
         container('docker') {
           sh '''
             cp ./nginx-proxy/nginx.conf ./nginx-proxy/nginx.conf.modified
-            sed -i 's|location / {|location / {\\n        proxy_set_header X-Forwarded-For \\$remote_addr;\\n        proxy_pass http://flask-app:5000;|' ./nginx-proxy/nginx.conf.modified
+            echo "        proxy_set_header X-Forwarded-For \$remote_addr;" >> ./nginx-proxy/nginx.conf.modified
+            echo "        proxy_pass http://flask-app:5000;" >> ./nginx-proxy/nginx.conf.modified
           '''
         }
       }
