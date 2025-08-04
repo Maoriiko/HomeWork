@@ -201,21 +201,21 @@ spec:
             docker network create flask-net || true
 
             echo "--- Running flask-app ---"
-            docker run -d --rm --name flask-app \\
-              -p 5001:5000 \\
-              --network flask-net \\
-              -v /var/run/docker.sock:/var/run/docker.sock \\
-              flask-app:latest
+            docker run -d --rm --name flask-app \
+			  -p 5001:5000 \
+			  --network flask-net \
+			  -v /var/run/docker.sock:/var/run/docker.sock \
+			  $DOCKERHUB_FLASK
 
             echo "--- Waiting for Flask to be ready ---"
             sleep 5
 
             echo "--- Running nginx-proxy ---"
-            docker run -d --rm --name nginx-proxy \\
-              -p 8081:80 \\
-              --network flask-net \\
-              -v /var/run/docker.sock:/var/run/docker.sock \\
-              nginx-proxy:latest
+			docker run -d --rm --name nginx-proxy \
+			  -p 8081:80 \
+			  --network flask-net \
+			  -v /var/run/docker.sock:/var/run/docker.sock \
+			  $DOCKERHUB_NGINX
 
             echo "--- Checking running containers ---"
             docker ps
