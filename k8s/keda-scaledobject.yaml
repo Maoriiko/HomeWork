@@ -5,8 +5,10 @@ metadata:
 spec:
   scaleTargetRef:
     name: flask-app
+  minReplicaCount: 1
+  maxReplicaCount: 5
   triggers:
   - type: cpu
     metadata:
       type: Utilization
-      value: '50'
+      value: "50"
