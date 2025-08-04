@@ -115,10 +115,10 @@ spec:
           sh '''
             cp ./nginx-proxy/nginx.conf ./nginx-proxy/nginx.conf.modified
             cat > ./nginx-proxy/temp_config.txt << 'EOF'
-            proxy_set_header X-Forwarded-For \\$remote_addr;
+            proxy_set_header X-Forwarded-For \\\\$remote_addr;
             proxy_pass http://flask-app:5000;
 EOF
-            sed -i '/location \\//r ./nginx-proxy/temp_config.txt' ./nginx-proxy/nginx.conf.modified
+            sed -i '/location \\\\//r ./nginx-proxy/temp_config.txt' ./nginx-proxy/nginx.conf.modified
             rm ./nginx-proxy/temp_config.txt
           '''
         }
