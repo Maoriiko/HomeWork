@@ -112,15 +112,11 @@ spec:
     stage('Prepare Nginx Config') {
       steps {
         container('docker') {
-          sh '''
-            cp ./nginx-proxy/nginx.conf ./nginx-proxy/nginx.conf.modified
-            cat > ./nginx-proxy/temp_config.txt << 'EOF'
-            proxy_set_header X-Forwarded-For \\\\$remote_addr;
-            proxy_pass http://flask-app:5000;
-EOF
-            sed -i '/location \\\\//r ./nginx-proxy/temp_config.txt' ./nginx-proxy/nginx.conf.modified
-            rm ./nginx-proxy/temp_config.txt
-          '''
+          sh 'cp ./nginx-proxy/nginx.conf ./nginx-proxy/nginx.conf.modified'
+          sh 'echo "            proxy_set_header X-Forwarded-For \\$remote_addr;" > ./nginx-proxy/temp_config.txt'
+          sh 'echo "            proxy_pass http://flask-app:5000;" >> ./nginx-proxy/temp_config.txt'
+          sh 'sed -i "/location \\//r ./nginx-proxy/temp_config.txt" ./nginx-proxy/nginx.conf.modified'
+          sh 'rm ./nginx-proxy/temp_config.txt'
         }
       }
     }
