@@ -57,7 +57,7 @@ spec:
             docker run -d --rm --name nginx-proxy -p 8081:80 --network flask-net nginx-proxy:latest
             sleep 10
             apk add --no-cache curl
-            curl -f http://localhost:8081/containers
+            curl -f http://nginx-proxy/containers
           '''
         }
       }
