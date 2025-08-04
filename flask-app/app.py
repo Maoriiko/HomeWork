@@ -4,6 +4,10 @@ import docker
 app = Flask(__name__)
 client = docker.from_env()
 
+@app.route("/")
+def home():
+    return "Hello from Flask root!"
+	
 @app.route('/containers')
 def list_containers():
     containers = client.containers.list()
