@@ -3,7 +3,27 @@ pipelineJob('Build_and_Run_Flask_Nginx') {
     cps {
       script("""
 pipeline {
-  agent any
+  agent {
+    kubernetes {
+      yaml '''
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: docker
+    image: docker:20.10.16-dind
+    securityContext:
+      privileged: true
+    volumeMounts:
+    - mountPath: /var/run/docker.sock
+      name: docker-sock
+  volumes:
+  - name: docker-sock
+    hostPath:
+      path: /var/run/docker.sock
+'''
+    }
+  }
 
   stages {
     stage('Checkout') {
@@ -21,19 +41,23 @@ pipeline {
 
     stage('Build Flask Image') {
       steps {
-        sh 'docker build -t flask-app:latest ./flask-app'
+        container('docker') {
+          sh 'docker build -t flask-app:latest ./flask-app'
+        }
       }
     }
 
     stage('Build Nginx Image') {
       steps {
-        sh 'docker build -t nginx-proxy:latest ./nginx-proxy'
+        container('docker') {
+          sh 'docker build -t nginx-proxy:latest ./nginx-proxy'
         }
+      }
     }
 
     stage('Run Containers') {
       steps {
-        script {
+        container('docker') {
           sh '''
             docker network create flask-net || true
             docker run -d --rm --name flask-app --network flask-net flask-app:latest
@@ -48,11 +72,13 @@ pipeline {
 
   post {
     always {
-      sh '''
-        docker stop flask-app || true
-        docker stop nginx-proxy || true
-        docker network rm flask-net || true
-      '''
+      container('docker') {
+        sh '''
+          docker stop flask-app || true
+          docker stop nginx-proxy || true
+          docker network rm flask-net || true
+        '''
+      }
     }
   }
 }
