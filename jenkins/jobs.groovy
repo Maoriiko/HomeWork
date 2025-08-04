@@ -8,10 +8,17 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        git url: 'https://github.com/Maoriiko/HomeWork.git', branch: 'main'
+        checkout([
+          \$class: 'GitSCM',
+          branches: [[name: '*/main']],
+          userRemoteConfigs: [[
+            url: 'https://github.com/Maoriiko/HomeWork.git',
+            credentialsId: 'GithubToken2'
+          ]]
+        ])
       }
     }
-    
+
     stage('Build Flask Image') {
       steps {
         script {
@@ -19,7 +26,7 @@ pipeline {
         }
       }
     }
-    
+
     stage('Build Nginx Image') {
       steps {
         script {
@@ -27,7 +34,7 @@ pipeline {
         }
       }
     }
-    
+
     stage('Run Containers') {
       steps {
         script {
@@ -42,7 +49,7 @@ pipeline {
       }
     }
   }
-  
+
   post {
     always {
       sh '''
