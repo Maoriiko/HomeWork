@@ -113,10 +113,10 @@ spec:
       steps {
         container('docker') {
           sh 'cp ./nginx-proxy/nginx.conf ./nginx-proxy/nginx.conf.modified'
-          sh 'echo "            proxy_set_header X-Forwarded-For \\$remote_addr;" > ./nginx-proxy/temp_config.txt'
-          sh 'echo "            proxy_pass http://flask-app:5000;" >> ./nginx-proxy/temp_config.txt'
-          sh 'sed -i "/location \\//r ./nginx-proxy/temp_config.txt" ./nginx-proxy/nginx.conf.modified'
-          sh 'rm ./nginx-proxy/temp_config.txt'
+          writeFile file: './nginx-proxy/proxy_config.txt', text: '''            proxy_set_header X-Forwarded-For $remote_addr;
+            proxy_pass http://flask-app:5000;'''
+          sh 'sed -i "/location \\//r ./nginx-proxy/proxy_config.txt" ./nginx-proxy/nginx.conf.modified'
+          sh 'rm ./nginx-proxy/proxy_config.txt'
         }
       }
     }
